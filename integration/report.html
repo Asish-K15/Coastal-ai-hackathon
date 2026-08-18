@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CoastalVision AI — Fallback Report</title>
+<link rel="stylesheet" href="../frontend/public/style.css" />
+</head>
+<body>
+<!--
+  This is a STANDALONE fallback report for demo-mode safety.
+
+  Unlike frontend/public/report.html (which fetches the *live*
+  outputs/stats.json), this page reads integration/sample_stats.json —
+  a bundled, pre-generated snapshot — so the team can still show
+  results even if the live pipeline run fails right before presenting.
+
+  Refresh integration/sample_stats.json any time by running:
+      python run_demo.py
+-->
+<header class="app-header">
+  <div class="titles">
+    <h1>CoastalVision AI</h1>
+    <p>Coastal Change Analysis Report (Fallback / Offline Snapshot)</p>
+  </div>
+  <span class="data-badge">DEMO / SYNTHETIC DATA</span>
+</header>
+
+<main id="app-root">
+  <section class="card aoi-meta">
+    <span><strong>AOI:</strong> <span data-aoi-name>—</span></span>
+    <span><strong>Before Date:</strong> <span data-date-before>—</span></span>
+    <span><strong>After Date:</strong> <span data-date-after>—</span></span>
+  </section>
+
+  <section class="card">
+    <h2>Summary Statistics</h2>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="label">Erosion Area</div>
+        <div class="value" data-eroded>—</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">Accretion Area</div>
+        <div class="value" data-accreted>—</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">Net Change</div>
+        <div class="value" data-net>—</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">Percentage Change</div>
+        <div class="value" data-percent>—</div>
+      </div>
+      <div class="stat-box risk" style="grid-column: 1 / -1;">
+        <div class="label">Risk Level</div>
+        <div class="value" data-risk>—</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Interpretation</h2>
+    <p class="interpretation" id="interpretation-text">Loading…</p>
+  </section>
+</main>
+
+<footer class="disclaimer">
+  This fallback page reads a bundled snapshot (integration/sample_stats.json), not the
+  live pipeline output — used only if the live demo cannot run during presentation.
+</footer>
+
+<script src="../frontend/public/app.js"></script>
+<script>
+(async function () {
+  const { renderStats, interpretation } = window.CoastalVision;
+  const root = document.getElementById("app-root");
+  try {
+    const res = await fetch("sample_stats.json", { cache: "no-store" });
+    const stats = await res.json();
+    renderStats(root, stats);
+    document.getElementById("interpretation-text").textContent = interpretation(stats);
+  } catch (err) {
+    root.innerHTML = `<div class="error">Could not load integration/sample_stats.json: ${err.message}</div>`;
+    console.error(err);
+  }
+})();
+</script>
+</body>
+</html>
