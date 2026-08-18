@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CoastalVision AI — Report</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <div class="titles">
+    <h1>CoastalVision AI</h1>
+    <p>Coastal Change Analysis Report</p>
+  </div>
+  <div style="display:flex; align-items:center; gap:14px;">
+    <span class="data-badge">DEMO / SYNTHETIC DATA</span>
+    <nav class="tabs">
+      <a href="index.html">Dashboard</a>
+      <a href="report.html" class="active">Report</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app-root">
+
+  <section class="card aoi-meta">
+    <span><strong>AOI:</strong> <span data-aoi-name>—</span></span>
+    <span><strong>Before Date:</strong> <span data-date-before>—</span></span>
+    <span><strong>After Date:</strong> <span data-date-after>—</span></span>
+  </section>
+
+  <section class="card">
+    <h2>Summary Statistics</h2>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="label">Erosion Area</div>
+        <div class="value" data-eroded>—</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">Accretion Area</div>
+        <div class="value" data-accreted>—</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">Net Change</div>
+        <div class="value" data-net>—</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">Percentage Change</div>
+        <div class="value" data-percent>—</div>
+      </div>
+      <div class="stat-box risk" style="grid-column: 1 / -1;">
+        <div class="label">Risk Level</div>
+        <div class="value" data-risk>—</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Interpretation</h2>
+    <p class="interpretation" id="interpretation-text">Loading…</p>
+  </section>
+
+  <section class="card">
+    <h2>Change Visualization</h2>
+    <p class="subtitle">Left: before mask · Middle: after mask · Right: change map (red = erosion, green = accretion)</p>
+    <div class="change-view" style="aspect-ratio: 3/1;">
+      <img src="/outputs/visualization.png" alt="Before / After / Change visualization" style="object-fit: contain;" />
+    </div>
+    <div class="legend">
+      <span class="erosion"><span class="swatch"></span>Erosion (land → water)</span>
+      <span class="accretion"><span class="swatch"></span>Accretion (water → land)</span>
+    </div>
+  </section>
+
+</main>
+
+<footer class="disclaimer">
+  Demo risk classification based on detected rate/percentage of coastal change —
+  not a scientifically validated model. Imagery shown is synthetic sample data for
+  MVP demonstration purposes.
+</footer>
+
+<script src="app.js"></script>
+<script>
+(async function () {
+  const { loadCoastalData, renderStats, interpretation } = window.CoastalVision;
+  const root = document.getElementById("app-root");
+  try {
+    const { stats } = await loadCoastalData();
+    renderStats(root, stats);
+    document.getElementById("interpretation-text").textContent = interpretation(stats);
+  } catch (err) {
+    root.innerHTML = `<div class="error">Could not load coastal data: ${err.message}.
+      Run <code>python data-processing/pipeline.py</code> first, and make sure you're
+      serving this folder over HTTP (not opening the file directly).</div>`;
+    console.error(err);
+  }
+})();
+</script>
+
+</body>
+</html>

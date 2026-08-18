@@ -1,0 +1,15 @@
+{
+  "pixel_area_sqm": 25.0,
+  "image_width": 128,
+  "image_height": 128,
+  "change_encoding": {
+    "0": "no_change",
+    "1": "erosion",
+    "2": "accretion"
+  },
+  "data_source": "DEMO / SYNTHETIC DATA",
+  "risk_thresholds": {
+    "low_max_pct": 2.0,
+    "medium_max_pct": 6.0
+  }
+}
