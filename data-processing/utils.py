@@ -49,9 +49,9 @@ def ensure_dir(path: str) -> str:
 class PipelineConfig:
     # --- AOI / dataset metadata (demo values — replace with real values) ---
     aoi_name: str = "Primary Coastal AOI"
-    date_before: str = "2020-01-15"
-    date_after: str = "2025-01-15"
-    data_source: str = "DEMO / SYNTHETIC DATA"
+    date_before: str = "2020-12-28"
+    date_after: str = "2025-01-16"
+    data_source: str = "Copernicus Sentinel-2 L2A"
 
     # --- NDWI ---
     ndwi_threshold: float = 0.0  # pixels with NDWI > threshold => water
@@ -61,7 +61,7 @@ class PipelineConfig:
     # For real satellite data this should be derived from raster metadata
     # (see mask_generation.load_bands / rasterio transform) instead of
     # being hard-coded.
-    pixel_resolution_m: float = 5.0  # metres per pixel edge
+    pixel_resolution_m: float = 10.0  # metres per pixel edge
 
     @property
     def pixel_area_sqm(self) -> float:
