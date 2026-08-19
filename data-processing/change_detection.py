@@ -1,83 +1,80 @@
+"""
+change_detection.py
+--------------------
+Pixel-level comparison of the "before" and "after" water masks.
+
+Encoding (see SCHEMA.md, kept in sync with this constant set):
+
+    0 = no change   (Land->Land or Water->Water)
+    1 = erosion     (Land->Water)
+    2 = accretion   (Water->Land)
+
+Mask convention (matches ndwi.create_water_mask): 1 = water, 0 = land.
+"""
+
+from __future__ import annotations
+
+from typing import Tuple
+
 import numpy as np
 
+NO_CHANGE = 0
+EROSION = 1
+ACCRETION = 2
 
-def detect_changes(before_mask, after_mask):
+
+def detect_change(before_mask: np.ndarray, after_mask: np.ndarray) -> np.ndarray:
     """
-    Compare two binary land/water masks.
+    Compare two binary water masks (1=water, 0=land) and classify each
+    pixel as no-change / erosion / accretion.
 
-    Mask convention:
-        0 = Land
-        1 = Water
+    Parameters
+    ----------
+    before_mask, after_mask : np.ndarray
+        Binary (0/1) arrays of identical shape.
 
-    Land -> Water = Erosion
-    Water -> Land = Accretion
-
-    Returns:
-        erosion_mask
-        accretion_mask
-        erosion_pixels
-        accretion_pixels
+    Returns
+    -------
+    np.ndarray (same shape, dtype=uint8)
+        0 = no change, 1 = erosion (land->water), 2 = accretion (water->land)
     """
-
-    # Check that both masks have the same dimensions
     if before_mask.shape != after_mask.shape:
-        raise ValueError("Before and after masks must have the same shape.")
+        raise ValueError(
+            f"before_mask shape {before_mask.shape} != after_mask shape {after_mask.shape}"
+        )
 
-    # Detect erosion: Land -> Water
-    erosion_mask = (before_mask == 0) & (after_mask == 1)
+    before = before_mask.astype(bool)
+    after = after_mask.astype(bool)
 
-    # Detect accretion: Water -> Land
-    accretion_mask = (before_mask == 1) & (after_mask == 0)
+    change_map = np.full(before.shape, NO_CHANGE, dtype=np.uint8)
 
-    # Count changed pixels
-    erosion_pixels = int(np.sum(erosion_mask))
-    accretion_pixels = int(np.sum(accretion_mask))
+    # Land (False) -> Water (True) = erosion
+    change_map[(~before) & after] = EROSION
 
-    return (
-        erosion_mask,
-        accretion_mask,
-        erosion_pixels,
-        accretion_pixels
-    )
+    # Water (True) -> Land (False) = accretion
+    change_map[before & (~after)] = ACCRETION
+
+    # Land->Land and Water->Water pixels remain NO_CHANGE by construction.
+    return change_map
 
 
-if __name__ == "__main__":
+def split_change_masks(change_map: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Split a combined change_map into separate erosion/accretion binary masks."""
+    erosion_mask = (change_map == EROSION).astype(np.uint8)
+    accretion_mask = (change_map == ACCRETION).astype(np.uint8)
+    return erosion_mask, accretion_mask
 
-    # Temporary dummy masks for testing.
-    # These will later be replaced by Member 1's real masks.
 
-    before_mask = np.array([
-    [0, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0],
-    [0, 1, 1, 1, 0],
-    [0, 0, 0, 0, 0]
-    ])
+def change_map_to_rgb(change_map: np.ndarray) -> np.ndarray:
+    """
+    Render the change_map as an RGB visualization.
 
-    after_mask = np.array([
-    [0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 0, 0, 0]
-   ])
-
-    (
-        erosion_mask,
-        accretion_mask,
-        erosion_pixels,
-        accretion_pixels
-    ) = detect_changes(before_mask, after_mask)
-
-    print("Before mask:")
-    print(before_mask)
-
-    print("\nAfter mask:")
-    print(after_mask)
-
-    print("\nErosion mask:")
-    print(erosion_mask.astype(int))
-
-    print("\nAccretion mask:")
-    print(accretion_mask.astype(int))
-
-    print("\nErosion pixels:", erosion_pixels)
-    print("Accretion pixels:", accretion_pixels)
+    Red   = erosion
+    Green = accretion
+    Black = no change
+    """
+    h, w = change_map.shape
+    rgb = np.zeros((h, w, 3), dtype=np.uint8)
+    rgb[change_map == EROSION] = [220, 40, 40]      # red
+    rgb[change_map == ACCRETION] = [40, 180, 90]    # green
+    return rgb

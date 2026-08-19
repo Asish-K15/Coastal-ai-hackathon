@@ -1,0 +1,10 @@
+{
+  "aoi_name": "Primary Coastal AOI",
+  "date_before": "2020-01-15",
+  "date_after": "2025-01-15",
+  "area_eroded_sqm": 49625.0,
+  "area_accreted_sqm": 40275.0,
+  "net_change_sqm": -9350.0,
+  "percent_change": -4.02,
+  "risk_tag": "Medium"
+}

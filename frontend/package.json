@@ -1,0 +1,10 @@
+{
+  "name": "coastalvision-ai-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CoastalVision AI dashboard. Static HTML/CSS/JS by design for offline hackathon demo reliability (see frontend/README.md) — no bundler, no CDN, no network required.",
+  "scripts": {
+    "dev": "cd .. && python3 -m http.server 8080",
+    "start": "cd .. && python3 -m http.server 8080"
+  }
+}
