@@ -1,145 +1,525 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CoastalVision AI — Dashboard</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CoastalVision AI — Dashboard</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIINfQ3b5b5Qq2zK9cX5wKq5kQ5v5Q5v5Q5="
+    crossorigin=""
+  />
 </head>
+
 <body>
 
 <header class="app-header">
+
   <div class="titles">
     <h1>CoastalVision AI</h1>
     <p>AI-Integrated Geospatial Coastal Change Monitoring</p>
   </div>
+
   <div style="display:flex; align-items:center; gap:14px;">
-    <span class="data-badge" id="data-badge">DEMO / SYNTHETIC DATA</span>
+
+    <span class="data-badge" id="data-badge">
+      DEMO / SYNTHETIC DATA
+    </span>
+
     <nav class="tabs">
       <a href="index.html" class="active">Dashboard</a>
       <a href="report.html">Report</a>
     </nav>
+
   </div>
+
 </header>
+
 
 <main id="app-root">
 
+  <!-- AOI INFORMATION -->
   <section class="card aoi-meta">
-    <span><strong>AOI:</strong> <span data-aoi-name>—</span></span>
-    <span><strong>Before:</strong> <span data-date-before>—</span></span>
-    <span><strong>After:</strong> <span data-date-after>—</span></span>
+
+    <span>
+      <strong>AOI:</strong>
+      <span data-aoi-name>—</span>
+    </span>
+
+    <span>
+      <strong>Before:</strong>
+      <span data-date-before>—</span>
+    </span>
+
+    <span>
+      <strong>After:</strong>
+      <span data-date-after>—</span>
+    </span>
+
   </section>
 
+
+  <!-- DASHBOARD -->
   <section class="grid-2">
 
+
+    <!-- BEFORE / AFTER -->
     <div class="card">
+
       <h2>Before / After Comparison</h2>
-      <p class="subtitle">Drag the slider to compare coastal imagery across the two dates.</p>
+
+      <p class="subtitle">
+        Drag the slider to compare coastal imagery across the two dates.
+      </p>
+
       <div class="slider-wrap" id="slider-wrap">
-        <img src="/outputs/visualization.png" class="before-img" id="before-img" alt="Before mask" />
-        <img src="/outputs/visualization.png" class="after-img" id="after-img" alt="After mask" />
-        <div class="slider-label before">BEFORE</div>
-        <div class="slider-label after">AFTER</div>
-        <div class="slider-handle" id="slider-handle"></div>
+
+        <img
+          src="/outputs/before_mask.png"
+          class="before-img"
+          id="before-img"
+          alt="Before coastal mask"
+        />
+
+        <img
+          src="/outputs/after_mask.png"
+          class="after-img"
+          id="after-img"
+          alt="After coastal mask"
+        />
+
+        <div class="slider-label before">
+          BEFORE
+        </div>
+
+        <div class="slider-label after">
+          AFTER
+        </div>
+
+        <div
+          class="slider-handle"
+          id="slider-handle">
+        </div>
+
       </div>
 
+
+      <!-- OVERLAY CONTROLS -->
       <div style="margin-top:18px;">
+
         <div class="overlay-controls">
-          <button class="active" data-view="change">Change Overlay</button>
-          <button data-view="erosion">Erosion Only</button>
-          <button data-view="accretion">Accretion Only</button>
+
+          <button
+            class="active"
+            data-view="change">
+            Change Overlay
+          </button>
+
+          <button
+            data-view="erosion">
+            Erosion Only
+          </button>
+
+          <button
+            data-view="accretion">
+            Accretion Only
+          </button>
+
         </div>
+
+
         <div class="change-view">
-          <img id="change-img" src="/outputs/change_map.png" alt="Change map" />
+
+          <img
+            id="change-img"
+            src="/outputs/change_map.png"
+            alt="Coastal change map"
+          />
+
         </div>
+
+
         <div class="legend">
-          <span class="erosion"><span class="swatch"></span>Erosion (land → water)</span>
-          <span class="accretion"><span class="swatch"></span>Accretion (water → land)</span>
+
+          <span class="erosion">
+            <span class="swatch"></span>
+            Erosion (land → water)
+          </span>
+
+          <span class="accretion">
+            <span class="swatch"></span>
+            Accretion (water → land)
+          </span>
+
         </div>
+
       </div>
+
     </div>
 
+
+    <!-- STATISTICS -->
     <div class="card">
+
       <h2>Coastal Change Statistics</h2>
-      <p class="subtitle">Loaded live from <code>outputs/stats.json</code>.</p>
+
+      <p class="subtitle">
+        Loaded live from <code>outputs/stats.json</code>.
+      </p>
+
+
       <div class="stats-grid">
+
         <div class="stat-box">
-          <div class="label">Area Eroded</div>
-          <div class="value" data-eroded>—</div>
+
+          <div class="label">
+            Area Eroded
+          </div>
+
+          <div
+            class="value"
+            data-eroded>
+            —
+          </div>
+
         </div>
+
+
         <div class="stat-box">
-          <div class="label">Area Accreted</div>
-          <div class="value" data-accreted>—</div>
+
+          <div class="label">
+            Area Accreted
+          </div>
+
+          <div
+            class="value"
+            data-accreted>
+            —
+          </div>
+
         </div>
+
+
         <div class="stat-box">
-          <div class="label">Net Change</div>
-          <div class="value" data-net>—</div>
+
+          <div class="label">
+            Net Change
+          </div>
+
+          <div
+            class="value"
+            data-net>
+            —
+          </div>
+
         </div>
+
+
         <div class="stat-box">
-          <div class="label">Percentage Change</div>
-          <div class="value" data-percent>—</div>
+
+          <div class="label">
+            Percentage Change
+          </div>
+
+          <div
+            class="value"
+            data-percent>
+            —
+          </div>
+
         </div>
-        <div class="stat-box risk" style="grid-column: 1 / -1;">
-          <div class="label">Risk Level</div>
-          <div class="value" data-risk>—</div>
+
+
+        <div
+          class="stat-box risk"
+          style="grid-column: 1 / -1;">
+
+          <div class="label">
+            Risk Level
+          </div>
+
+          <div
+            class="value"
+            data-risk>
+            —
+          </div>
+
         </div>
+
       </div>
+
     </div>
 
   </section>
+
+
+  <!-- LEAFLET MAP -->
+  <section class="card map-card">
+
+    <h2>Coastal Change Map</h2>
+
+    <p class="subtitle">
+      Interactive Leaflet map showing the coastal Area of Interest.
+    </p>
+
+    <div id="coastal-map"></div>
+
+    <div class="map-note">
+      <strong>Map:</strong>
+      OpenStreetMap / Leaflet
+    </div>
+
+  </section>
+
 
 </main>
 
+
 <footer class="disclaimer">
-  Demo risk classification based on detected rate/percentage of coastal change —
-  not a scientifically validated model. Imagery shown is synthetic sample data for
-  MVP demonstration purposes; see <code>data/README.md</code> and <code>SCHEMA.md</code>.
+
+  Demo risk classification based on detected rate/percentage
+  of coastal change — not a scientifically validated model.
+
+  Imagery shown is synthetic sample data for MVP demonstration
+  purposes; see <code>data/README.md</code> and <code>SCHEMA.md</code>.
+
 </footer>
 
+
+<!-- Leaflet JavaScript -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin="">
+</script>
+
+
+<!-- Your existing JavaScript -->
 <script src="app.js"></script>
+
+
 <script>
+
 (async function () {
-  const { loadCoastalData, renderStats } = window.CoastalVision;
+
+  const {
+    loadCoastalData,
+    renderStats
+  } = window.CoastalVision;
+
   const root = document.getElementById("app-root");
 
+
   try {
-    const { stats } = await loadCoastalData();
+
+    /*
+     * LOAD DATA
+     *
+     * Values come from:
+     * outputs/stats.json
+     * outputs/meta.json
+     */
+    const {
+      stats,
+      meta
+    } = await loadCoastalData();
+
+
+    /*
+     * RENDER DASHBOARD STATISTICS
+     */
     renderStats(root, stats);
 
-    // Wire the before/after slider (uses the same stitched visualization
-    // panel; before/after masks are the left/middle thirds, but for a
-    // clean two-way compare we just swap in before_mask/after_mask here).
-    document.getElementById("before-img").src = "/outputs/before_mask.png";
-    document.getElementById("after-img").src = "/outputs/after_mask.png";
 
+    /*
+     * BEFORE / AFTER IMAGES
+     */
+    document.getElementById("before-img").src =
+      "/outputs/before_mask.png";
+
+    document.getElementById("after-img").src =
+      "/outputs/after_mask.png";
+
+
+    /*
+     * INITIALIZE BEFORE / AFTER SLIDER
+     */
     window.CoastalVision.initSlider(
       document.getElementById("slider-wrap"),
       document.getElementById("slider-handle"),
       document.getElementById("after-img")
     );
 
-    // Overlay toggle buttons
-    const changeImg = document.getElementById("change-img");
-    const buttons = document.querySelectorAll(".overlay-controls button");
+
+    /*
+     * EROSION / ACCRETION / CHANGE OVERLAY
+     */
+    const changeImg =
+      document.getElementById("change-img");
+
+    const buttons =
+      document.querySelectorAll(
+        ".overlay-controls button"
+      );
+
+
     const sources = {
-      change: "/outputs/change_map.png",
-      erosion: "/outputs/erosion_mask.png",
-      accretion: "/outputs/accretion_mask.png",
+
+      change:
+        "/outputs/change_map.png",
+
+      erosion:
+        "/outputs/erosion_mask.png",
+
+      accretion:
+        "/outputs/accretion_mask.png"
+
     };
+
+
     buttons.forEach((btn) => {
+
       btn.addEventListener("click", () => {
-        buttons.forEach((b) => b.classList.remove("active"));
+
+        buttons.forEach((b) => {
+          b.classList.remove("active");
+        });
+
         btn.classList.add("active");
-        changeImg.src = sources[btn.dataset.view];
+
+        changeImg.src =
+          sources[btn.dataset.view];
+
       });
+
     });
+
+
+    /*
+     * LEAFLET MAP
+     */
+
+    if (typeof L !== "undefined") {
+
+      /*
+       * Default location.
+       *
+       * If your meta.json later contains
+       * center_lat / center_lon, those values
+       * will automatically be used.
+       */
+      const latitude =
+        Number(
+          meta?.center_lat ??
+          meta?.latitude ??
+          20.5
+        );
+
+      const longitude =
+        Number(
+          meta?.center_lon ??
+          meta?.longitude ??
+          86.9
+        );
+
+
+      /*
+       * CREATE MAP
+       */
+      const map =
+        L.map("coastal-map").setView(
+          [latitude, longitude],
+          10
+        );
+
+
+      /*
+       * OPENSTREETMAP BASE MAP
+       */
+      L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 19,
+
+          attribution:
+            '&copy; OpenStreetMap contributors'
+        }
+      ).addTo(map);
+
+
+      /*
+       * AOI MARKER
+       */
+      const marker =
+        L.marker([
+          latitude,
+          longitude
+        ]).addTo(map);
+
+
+      /*
+       * POPUP INFORMATION
+       */
+      const aoiName =
+        meta?.aoi_name ??
+        meta?.name ??
+        "Primary Coastal AOI";
+
+
+      marker.bindPopup(`
+        <strong>${aoiName}</strong><br>
+        Coastal Change Monitoring AOI
+      `);
+
+
+      /*
+       * SHOW POPUP
+       */
+      marker.openPopup();
+
+    } else {
+
+      console.error(
+        "Leaflet library failed to load."
+      );
+
+    }
+
+
   } catch (err) {
-    root.innerHTML = `<div class="error">Could not load coastal data: ${err.message}.
-      Run <code>python data-processing/pipeline.py</code> first, and make sure you're
-      serving this folder over HTTP (not opening the file directly).</div>`;
+
+    root.innerHTML = `
+      <div class="error">
+
+        Could not load coastal data:
+        ${err.message}.
+
+        <br><br>
+
+        Run:
+
+        <code>
+          python data-processing/pipeline.py
+        </code>
+
+        first, and make sure you are
+        serving the project over HTTP.
+
+      </div>
+    `;
+
     console.error(err);
+
   }
+
 })();
+
 </script>
 
 </body>
